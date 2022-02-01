@@ -1,11 +1,11 @@
 def call(stages){
 
     def stagesList = stages.split(";")
-    stagesList.each{
-        println("===>${it}")
-        "${it}"()
+    // stagesList.each{
+    //     println("===>${it}")
+    //     "${it}"()
 
-    }
+    // }
 
    def listStagesOrder = [
         'build': 'stageCleanBuildTest',
@@ -23,7 +23,7 @@ def call(stages){
     } else {
         echo 'Stages a ejecutar :' + stages
         listStagesOrder.each { stageName, stageFunction ->
-            stages.each{ stageToExecute ->//variable as param
+            stagesList.each{ stageToExecute ->//variable as param
                 if(stageName.equals(stageToExecute)){
                 echo 'Ejecutando ' + stageFunction
                 "${stageFunction}"()
@@ -34,7 +34,17 @@ def call(stages){
     }
 }
 
-def build(){
+def allStages(){
+    stageCleanBuildTest()
+    stageSonar()
+    stageRunSpringCurl()
+    stageUploadNexus()
+    stageDownloadNexus()
+    stageRunJar()
+    stageCurlJar()
+}
+
+def stageCleanBuildTest(){
     env.TAREA = "Paso 1: Build && Test"
     stage("$env.TAREA"){
         sh "echo 'Build && Test!'"
@@ -43,7 +53,7 @@ def build(){
     }
 }
 
-def sonar(){
+def stageSonar(){
     env.TAREA="Paso 2: Sonar - Análisis Estático"
     stage("$env.TAREA"){
         sh "echo 'Análisis Estático!'"
@@ -55,7 +65,7 @@ def sonar(){
     }
 }
 
-def curl_spring(){
+def stageRunSpringCurl(){
     env.TAREA="Paso 3: Curl Springboot Gradle sleep 20"
     stage("$env.TAREA"){
         sh "gradle bootRun&"
@@ -63,7 +73,7 @@ def curl_spring(){
     }
 }
 
-def upload_nexus(){
+def stageUploadNexus(){
     env.TAREA="Paso 4: Subir Nexus"
     stage("$env.TAREA"){
         nexusPublisher nexusInstanceId: 'nexus3',
@@ -86,7 +96,7 @@ def upload_nexus(){
         ]
     }
 }
-def download_nexus(){
+def stageDownloadNexus(){
     // env.TAREA="Paso 3: Curl Springboot Gradle sleep 20"
     // stage("$env.TAREA"){
     stage("Paso 5: Descargar Nexus"){
@@ -94,14 +104,14 @@ def download_nexus(){
         sh ' curl -X GET -u $NEXUS_USER:$NEXUS_PASSWORD "http://nexus3:8081/repository/devops-usach-nexus/com/devopsusach2020/DevOpsUsach2020/0.0.1/DevOpsUsach2020-0.0.1.jar" -O'
     }
 }
-def run_jar(){
+def stageRunJar(){
       // env.TAREA="Paso 3: Curl Springboot Gradle sleep 20"
     // stage("$env.TAREA"){
     stage("Paso 6: Levantar Artefacto Jar"){
         sh 'nohup java -jar DevOpsUsach2020-0.0.1.jar & >/dev/null'
     }
 }
-def curl_jar(){
+def stageCurlJar(){
       // env.TAREA="Paso 3: Curl Springboot Gradle sleep 20"
     // stage("$env.TAREA"){
     stage("Paso 7: Testear Artefacto - Dormir(Esperar 20sg) "){
