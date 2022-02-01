@@ -15,13 +15,15 @@ def call(){
                       sh "env"
                       env.TAREA = ""
                       if(params.compileTool == 'maven'){
-                          //comilar maven
-                          def executor = load "maven.groovy"
-                          executor.call()
+                          //compilar maven
+                          //def executor = load "maven.groovy"
+                          //executor.call()
+                        maven.call();
                       }else{
-                          //comilar gradle
-                          def executor = load "gradle.groovy"
-                          executor.call()
+                          //compilar gradle
+                          //def executor = load "gradle.groovy"
+                          //executor.call()
+                        gradle.call()
                       }
                   }
               }
