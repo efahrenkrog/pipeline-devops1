@@ -6,7 +6,8 @@ def call(){
           NEXUS_PASSWORD     = credentials('NEXUS-PASS')
       }
       parameters {
-          choice choices: ['maven', 'gradle'], description: 'Seleccione una herramienta para preceder a compilar', name: 'compileTool'
+            choice choices: ['maven', 'gradle'], description: 'Seleccione una herramienta para preceder a compilar', name: 'compileTool'
+            text description: 'Enviar los stages separados por ";"... Vacío si necesita todos los stages', name: 'stages'
       }
       stages {
           stage("Pipeline"){
@@ -15,15 +16,9 @@ def call(){
                       sh "env"
                       env.TAREA = ""
                       if(params.compileTool == 'maven'){
-                          //compilar maven
-                          //def executor = load "maven.groovy"
-                          //executor.call()
-                        maven.call();
+                        maven.call(params.stages);
                       }else{
-                          //compilar gradle
-                          //def executor = load "gradle.groovy"
-                          //executor.call()
-                        gradle.call()
+                        gradle.call(params.stages)
                       }
                   }
               }
