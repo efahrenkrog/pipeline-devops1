@@ -34,7 +34,7 @@ def call(stages){
     }
 }
 
-def buil(){
+def build(){
     env.TAREA = "Paso 1: Build && Test"
     stage("$env.TAREA"){
         sh "echo 'Build && Test!'"
