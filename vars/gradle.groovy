@@ -1,5 +1,10 @@
 def call(stages){
 
+    def listStages =  stages.split(";")
+    listStages.each{
+        println("este es uno de los stages ==> ${it}")
+    }
+
     env.TAREA = "Paso 1: Build && Test"
     stage("$env.TAREA"){
         sh "echo 'Build && Test!'"
